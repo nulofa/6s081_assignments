@@ -4,7 +4,7 @@
 #include "kernel/fs.h"
 
 char*
-fmtname(char *path)
+fmtname(char *path) //format filename
 {
   static char buf[DIRSIZ+1];
   char *p;
@@ -18,7 +18,11 @@ fmtname(char *path)
   if(strlen(p) >= DIRSIZ)
     return p;
   memmove(buf, p, strlen(p));
+  // memset(char *str1, int i, n): 
+  //    fill up the first n bytes of str1 with i; 
   memset(buf+strlen(p), ' ', DIRSIZ-strlen(p));
+  // pad blank to the right end of file name to achieve 
+  // a length of DIRSIZ
   return buf;
 }
 
@@ -35,7 +39,8 @@ ls(char *path)
     return;
   }
 
-  if(fstat(fd, &st) < 0){
+//fstat() gets the state of the file fd refers to
+  if(fstat(fd, &st) < 0){ 
     fprintf(2, "ls: cannot stat %s\n", path);
     close(fd);
     return;
@@ -54,11 +59,15 @@ ls(char *path)
     strcpy(buf, path);
     p = buf+strlen(buf);
     *p++ = '/';
+    // Directory is a file containing a sequence of dirent structures.
     while(read(fd, &de, sizeof(de)) == sizeof(de)){
       if(de.inum == 0)
         continue;
+      //memmove(char *str1, char *str2, int n) 
+      //explain : copy n bytes of str2 to str1
       memmove(p, de.name, DIRSIZ);
-      p[DIRSIZ] = 0;
+      p[DIRSIZ] = 0; // end of file; 
+                    // char c = 0 <==> char c = '\0'
       if(stat(buf, &st) < 0){
         printf("ls: cannot stat %s\n", buf);
         continue;
