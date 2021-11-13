@@ -274,7 +274,6 @@ fork(void)
     return -1;
   }
   np->sz = p->sz;
-
   np->parent = p;
 
   // copy saved user registers.
@@ -294,7 +293,7 @@ fork(void)
   pid = np->pid;
 
   np->state = RUNNABLE;
-
+  np->tracemask = p->tracemask;
   release(&np->lock);
 
   return pid;
@@ -693,3 +692,15 @@ procdump(void)
     printf("\n");
   }
 }
+
+int proc_num(void) {
+  struct proc *p;
+  int num = 0;
+  for(p = proc; p < &proc[NPROC]; p++) {
+    if(p -> state != UNUSED) {
+      num++;
+    }
+  }
+  return num;
+}
+ 

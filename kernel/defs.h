@@ -185,3 +185,7 @@ void            virtio_disk_intr(void);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
+
+// for sys_info
+int freemem_size(void);
+int proc_num(void);
