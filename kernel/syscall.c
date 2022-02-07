@@ -131,7 +131,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_trace]   sys_trace,
-[SYS_sysinfo]   sys_sysinfo,
+[SYS_sysinfo] sys_sysinfo,
 };
 
 static char* syscallsname[] = {
@@ -157,6 +157,7 @@ static char* syscallsname[] = {
 [SYS_mkdir]   "mkdir",
 [SYS_close]   "close",
 [SYS_trace]   "trace",
+[SYS_sysinfo] "sys_sysinfo",
 };
 
 void
@@ -168,10 +169,13 @@ syscall(void)
   num = p->trapframe->a7;
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
     p->trapframe->a0 = syscalls[num](); // a0 store return value
+
+    // start 
     if(p->tracemask & (1<<num)){
         // printf("sys call num = %d\n",num);
         printf("%d: syscall %s -> %d\n",p->pid,syscallsname[num],p->trapframe->a0);
     }
+    // end 
   } else {
     printf("%d %s: unknown sys call %d\n",
             p->pid, p->name, num);

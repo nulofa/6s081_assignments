@@ -189,3 +189,5 @@ void            virtio_disk_intr(void);
 // for sys_info
 int freemem_size(void);
 int proc_num(void);
+
+int vmprint(pagetable_t);

@@ -104,21 +104,17 @@ uint64 sys_trace(void) {
   proc->tracemask = mask;
   return 0;
 }
-
-uint64
-sys_sysinfo(void)
-{
-  struct sysinfo info;
-  uint64 addr; // user pointer to struct stat
  
-  if(argaddr(0, &addr) < 0) // 不能是argaddr(1, &addr) 否则会出错
-    return -1;
+uint64 sys_sysinfo(void) {
+  struct sysinfo sys_info;
+  sys_info.freemem = freemem_size();
+  sys_info.nproc = proc_num();
   struct proc *p = myproc();
-  info.freemem = freemem_size();
-  info.nproc = proc_num();
- 
-  if(copyout(p->pagetable, addr, (char*)&info, sizeof(info))) {
+
+  uint64 addr; 
+  if(argaddr(0, &addr) < 0)
     return -1;
-  }
+  if(copyout(p->pagetable, addr, (char *)&sys_info, sizeof(sys_info)) < 0)
+      return -1;
   return 0;
 }
